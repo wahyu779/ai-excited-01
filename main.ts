@@ -1,21 +1,22 @@
-// Entrypoint for the ai-excited-01 submission: it ships the finished
-// artwork (entry.png, sitting next to this file) into the output folder
-// the make.fun runner provides, so the judge can see it.
+// BREAKOUT — ai-excited-01 entry.
+// Ships the entry artwork (entry.png, sitting next to this file) into the
+// output folder the make.fun runner provides, so the judge can see it.
 import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const entryName = "entry.png";
-const here = dirname(new URL(import.meta.url).pathname);
-const sourcePath = join(here, entryName);
+const ENTRY_FILE = "entry.png";
 
-if (!existsSync(sourcePath)) {
-  console.error(`Missing ${entryName} next to main.ts — nothing to deliver.`);
+const entryPath = join(dirname(fileURLToPath(import.meta.url)), ENTRY_FILE);
+
+if (!existsSync(entryPath)) {
+  console.error(`error: ${ENTRY_FILE} not found at ${entryPath}`);
   process.exit(1);
 }
 
 const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 mkdirSync(outputDir, { recursive: true });
 
-const targetPath = join(outputDir, entryName);
-copyFileSync(sourcePath, targetPath);
-console.log(`Delivered ${entryName} to ${targetPath}`);
+const destination = join(outputDir, ENTRY_FILE);
+copyFileSync(entryPath, destination);
+console.log(`delivered ${ENTRY_FILE} to ${destination}`);

@@ -1,24 +1,21 @@
-// BREAKOUT — ai-excited-01 entry (make.fun).
-// Ships the entry artwork (entry.png, sitting next to this file) into the
-// output folder the make.fun runner provides, so the judge can see it.
-import { copyFileSync, existsSync, mkdirSync, statSync } from "node:fs";
-import { dirname, join } from "node:path";
+// BREAKOUT — ai-excited-01 entry
+// The image is the artwork. This entrypoint simply delivers it:
+// copy entry.png (next to this file) into the output directory
+// expected by the make.fun kit, so the judge sees the piece.
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ENTRY_FILE = "entry.png";
-
 const here = dirname(fileURLToPath(import.meta.url));
-const source = join(here, ENTRY_FILE);
+const source = join(here, "entry.png");
+const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 
 if (!existsSync(source)) {
-  console.error(`error: ${ENTRY_FILE} not found next to main.ts`);
+  console.error(`entry.png not found next to main.ts (${source})`);
   process.exit(1);
 }
 
-const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 mkdirSync(outDir, { recursive: true });
-
-const dest = join(outDir, ENTRY_FILE);
-copyFileSync(source, dest);
-const size = statSync(dest).size;
-console.log(`delivered ${ENTRY_FILE} (${size} bytes) to ${dest}`);
+const destination = join(resolve(outDir), "entry.png");
+copyFileSync(source, destination);
+console.log(`BREAKOUT entry copied to ${destination}`);
